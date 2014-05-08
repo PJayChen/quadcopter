@@ -40,12 +40,16 @@ void USART2_IRQHandler()
                 rx_msg.ch = USART_ReceiveData(USART2);
 
                 xTimerReset(xTimerNoSignal, 10);
-                /* Queue the received byte. */
+               xQueueSendToBackFromISR(xQueueUARTRecvie, &rx_msg, &xHigherPriorityTaskWoken);
+
+		#if 0 
+		 /* Queue the received byte. */
                 if(!xQueueSendToBackFromISR(xQueueUARTRecvie, &rx_msg, &xHigherPriorityTaskWoken)) {
                         /* If there was an error queueing the received byte,
                          * freeze. */
                         while(1);
                 }
+#endif
         }
         else {
                 /* Only transmit and receive interrupts should be enabled.
